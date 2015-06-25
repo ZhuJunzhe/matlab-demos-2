@@ -1,0 +1,130 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Normalized absolute cross-correlation of H_7(63) an H_7(64) with four</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-06-25">
+      <meta name="m-file" content="hadamard_cros_corr"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Normalized absolute cross-correlation of H_7(63) an H_7(64) with four</h1>
+         <introduction></introduction>
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">times oversampling</a></li>
+               <li><a href="#3">Plot autocorrelation of code 1, and cross-correlation</a></li>
+            </ul>
+         </div>
+         <h2>times oversampling<a name="1"></a></h2>
+         <p>Copyright 2007 Telecommunications Lab</p><pre class="codeinput">clength=128;
+C=hadamard(clength);
+code1=C(63,:).';
+code2=C(64,:).';
+<span class="comment">% Oversampled code, oversampling factor 4, square chip pulse-shape, i.e.,</span>
+<span class="comment">% code chips are repeated 4 times:</span>
+code1o=kron(code1,[1 1 1 1].');
+code2o=kron(code1,[1 1 1 1].');
+</pre><h2>Plot autocorrelation of code 1, and cross-correlation<a name="3"></a></h2><pre class="codeinput"><span class="comment">%between code 1 and code 2</span>
+lag=-(2*length(code1o)-2)/2:(2*length(code1o)-2)/2;
+plot(lag,(abs(xcorr(code1o,code1o)))/length(code1o),<span class="string">'Linewidth'</span>,1.5)
+xlabel(<span class="string">'Delay (Samples)'</span>);ylabel(<span class="string">'Absolute Correlation'</span>)
+title(<span class="string">'Normalized absolute cross-correlation of H_7(63) an H_7(64) with four times oversampling'</span>)
+grid <span class="string">on</span>;
+</pre><img vspace="5" hspace="5" src="hadamard_cros_corr_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Normalized absolute cross-correlation of H_7(63) an H_7(64) with four
+%% times oversampling
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+%%
+% 
+clength=128;
+C=hadamard(clength);
+code1=C(63,:).';
+code2=C(64,:).';
+% Oversampled code, oversampling factor 4, square chip pulse-shape, i.e., 
+% code chips are repeated 4 times:
+code1o=kron(code1,[1 1 1 1].');
+code2o=kron(code1,[1 1 1 1].');
+
+%% Plot autocorrelation of code 1, and cross-correlation
+%between code 1 and code 2
+lag=-(2*length(code1o)-2)/2:(2*length(code1o)-2)/2;
+plot(lag,(abs(xcorr(code1o,code1o)))/length(code1o),'Linewidth',1.5)
+xlabel('Delay (Samples)');ylabel('Absolute Correlation')
+title('Normalized absolute cross-correlation of H_7(63) an H_7(64) with four times oversampling')
+grid on;
+##### SOURCE END #####
+-->
+   </body>
+</html>

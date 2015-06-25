@@ -1,0 +1,295 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Convolutional code performance in AWGN Channel</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-06-25">
+      <meta name="m-file" content="conv_code"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Convolutional code performance in AWGN Channel</h1>
+         <introduction>
+            <p>Copyright 2007 Telecommunications Lab</p>
+         </introduction>
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#2">Transmission without cahnnel coding</a></li>
+               <li><a href="#3">Channel Coding</a></li>
+               <li><a href="#4">Compute error rate for different values of SNR.</a></li>
+               <li><a href="#5">[133 171]</a></li>
+               <li><a href="#6">Compute error rate for different values of SNR.</a></li>
+               <li><a href="#7">[561 753]</a></li>
+            </ul>
+         </div>
+         <p>Generate data and apply viterbi channel coding and modulate the data</p><pre class="codeinput">M = 2;                                              <span class="comment">% BPSK modulation order</span>
+tx = randint(100000,1,M);                            <span class="comment">% Random bit stream</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><h2>Transmission without cahnnel coding<a name="2"></a></h2><pre class="codeinput">pskSig = pskmod(tx,M);
+SNR = 0:.5:5;                                        <span class="comment">% Range of SNR values, in dB.</span>
+<span class="keyword">for</span> n = 1:length(SNR)
+   rxSig = awgn(pskSig,SNR(n),<span class="string">'measured'</span>);          <span class="comment">% Add Gaussian noise.</span>
+   rx = pskdemod(rxSig,M);                          <span class="comment">% Demodulate.</span>
+   <span class="comment">% Compute error rate.</span>
+   [nErrors, BER0(n)] = biterr(tx,rx);
+<span class="keyword">end</span>
+semilogy(SNR, BER0,<span class="string">'c'</span>,<span class="string">'LineWidth'</span>,1.5);
+xlabel(<span class="string">'SNR'</span>);ylabel(<span class="string">'BER'</span>)
+grid <span class="string">on</span>;
+title(<span class="string">'Convolutional code performance in AWGN Channel'</span>);hold <span class="string">on</span>;
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><img vspace="5" hspace="5" src="conv_code_01.png"> <h2>Channel Coding<a name="3"></a></h2><pre class="codeinput">depth=3;
+Generator=[5 7];
+trel = poly2trellis(depth,Generator);               <span class="comment">% Trellis</span>
+code = convenc(tx,trel);                            <span class="comment">% Encode the message.</span>
+
+pskSig = pskmod(code,M);                            <span class="comment">% PSK signal</span>
+</pre><h2>Compute error rate for different values of SNR.<a name="4"></a></h2><pre class="codeinput">SNR =0:.5:5;                                        <span class="comment">% Range of SNR values, in dB.</span>
+<span class="keyword">for</span> n = 1:length(SNR)
+   rxSig = awgn(pskSig,SNR(n),<span class="string">'measured'</span>);          <span class="comment">% Add Gaussian noise.</span>
+   rx = pskdemod(rxSig,M);                          <span class="comment">% Demodulate.</span>
+   decoded = vitdec(rx,trel,depth,<span class="string">'cont'</span>,<span class="string">'hard'</span>);   <span class="comment">% Decode.</span>
+   <span class="comment">% Compute error rate.</span>
+   [nErrors, BER3(n)] = biterr(tx(1:end-depth),decoded(depth+1:end));
+<span class="keyword">end</span>
+
+semilogy(SNR, BER3,<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,1.5);
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">% %% [23 35]</span>
+<span class="comment">% depth=5;</span>
+<span class="comment">% Generator=[23 35];</span>
+<span class="comment">% trel = poly2trellis(depth,Generator);               % Trellis</span>
+<span class="comment">% code = convenc(tx,trel);                            % Encode the message.</span>
+<span class="comment">%</span>
+<span class="comment">% pskSig = pskmod(code,M);                            % PSK signal</span>
+<span class="comment">%</span>
+<span class="comment">% % Compute error rate for different values of SNR.</span>
+<span class="comment">% SNR = 0:.5:5;                                       % Range of SNR values, in dB.</span>
+<span class="comment">% for n = 1:length(SNR)</span>
+<span class="comment">%    rxSig = awgn(pskSig,SNR(n),'measured');          % Add Gaussian noise.</span>
+<span class="comment">%    rx = pskdemod(rxSig,M);                          % Demodulate.</span>
+<span class="comment">%    decoded = vitdec(rx,trel,depth,'cont','hard');   % Decode.</span>
+<span class="comment">%    % Compute error rate.</span>
+<span class="comment">%    [nErrors, BER5(n)] = biterr(tx(1:end-depth),decoded(depth+1:end));</span>
+<span class="comment">% end</span>
+<span class="comment">% semilogy(SNR, BER5,'r','LineWidth',1.5);</span>
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><img vspace="5" hspace="5" src="conv_code_02.png"> <h2>[133 171]<a name="5"></a></h2><pre class="codeinput">depth=7;
+Generator=[133 171];
+trel = poly2trellis(depth,Generator);               <span class="comment">% Trellis</span>
+code = convenc(tx,trel);                            <span class="comment">% Encode the message.</span>
+
+pskSig = pskmod(code,M);                            <span class="comment">% PSK signal</span>
+</pre><h2>Compute error rate for different values of SNR.<a name="6"></a></h2><pre class="codeinput">SNR = 0:.5:5;                                       <span class="comment">% Range of SNR values, in dB.</span>
+<span class="keyword">for</span> n = 1:length(SNR)
+   rxSig = awgn(pskSig,SNR(n),<span class="string">'measured'</span>);          <span class="comment">% Add Gaussian noise.</span>
+   rx = pskdemod(rxSig,M);                          <span class="comment">% Demodulate.</span>
+   decoded = vitdec(rx,trel,depth,<span class="string">'cont'</span>,<span class="string">'hard'</span>);   <span class="comment">% Decode.</span>
+   <span class="comment">% Compute error rate.</span>
+   [nErrors, BER7(n)] = biterr(tx(1:end-depth),decoded(depth+1:end));
+<span class="keyword">end</span>
+semilogy(SNR, BER7,<span class="string">'g'</span>,<span class="string">'LineWidth'</span>,1.5);
+
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><img vspace="5" hspace="5" src="conv_code_03.png"> <h2>[561 753]<a name="7"></a></h2><pre class="codeinput">depth=9;
+Generator=[561 753];
+trel = poly2trellis(depth,Generator);               <span class="comment">% Trellis</span>
+code = convenc(tx,trel);                            <span class="comment">% Encode the message.</span>
+
+pskSig = pskmod(code,M);                            <span class="comment">% PSK signal</span>
+
+<span class="comment">% Compute error rate for different values of SNR.</span>
+SNR = 0:.5:5;                                       <span class="comment">% Range of SNR values, in dB.</span>
+<span class="keyword">for</span> n = 1:length(SNR)
+   rxSig = awgn(pskSig,SNR(n),<span class="string">'measured'</span>);          <span class="comment">% Add Gaussian noise.</span>
+   rx = pskdemod(rxSig,M);                          <span class="comment">% Demodulate.</span>
+   decoded = vitdec(rx,trel,depth,<span class="string">'cont'</span>,<span class="string">'hard'</span>);   <span class="comment">% Decode.</span>
+   <span class="comment">% Compute error rate.</span>
+   [nErrors, BER9(n)] = biterr(tx(1:end-depth),decoded(depth+1:end));
+<span class="keyword">end</span>
+semilogy(SNR, BER9,<span class="string">'k'</span>,<span class="string">'LineWidth'</span>,1.5);
+legend(<span class="string">'uncoded'</span>,<span class="string">'K=3'</span>,<span class="string">'K=7'</span>,<span class="string">'K=9'</span>);<span class="comment">%</span>
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="conv_code_04.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Convolutional code performance in AWGN Channel
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+%%
+% 
+% Generate data and apply viterbi channel coding and modulate the data
+M = 2;                                              % BPSK modulation order
+tx = randint(100000,1,M);                            % Random bit stream
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Transmission without cahnnel coding
+pskSig = pskmod(tx,M);
+SNR = 0:.5:5;                                        % Range of SNR values, in dB.
+for n = 1:length(SNR)
+   rxSig = awgn(pskSig,SNR(n),'measured');          % Add Gaussian noise.
+   rx = pskdemod(rxSig,M);                          % Demodulate.
+   % Compute error rate.
+   [nErrors, BER0(n)] = biterr(tx,rx);
+end
+semilogy(SNR, BER0,'c','LineWidth',1.5);
+xlabel('SNR');ylabel('BER')
+grid on;
+title('Convolutional code performance in AWGN Channel');hold on;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Channel Coding
+depth=3;
+Generator=[5 7];
+trel = poly2trellis(depth,Generator);               % Trellis
+code = convenc(tx,trel);                            % Encode the message.
+
+pskSig = pskmod(code,M);                            % PSK signal
+
+%% Compute error rate for different values of SNR.
+SNR =0:.5:5;                                        % Range of SNR values, in dB.
+for n = 1:length(SNR)
+   rxSig = awgn(pskSig,SNR(n),'measured');          % Add Gaussian noise.
+   rx = pskdemod(rxSig,M);                          % Demodulate.
+   decoded = vitdec(rx,trel,depth,'cont','hard');   % Decode.
+   % Compute error rate.
+   [nErrors, BER3(n)] = biterr(tx(1:end-depth),decoded(depth+1:end));
+end
+
+semilogy(SNR, BER3,'b','LineWidth',1.5);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% [23 35]
+% depth=5;
+% Generator=[23 35];
+% trel = poly2trellis(depth,Generator);               % Trellis
+% code = convenc(tx,trel);                            % Encode the message.
+% 
+% pskSig = pskmod(code,M);                            % PSK signal
+% 
+% % Compute error rate for different values of SNR.
+% SNR = 0:.5:5;                                       % Range of SNR values, in dB.
+% for n = 1:length(SNR)
+%    rxSig = awgn(pskSig,SNR(n),'measured');          % Add Gaussian noise.
+%    rx = pskdemod(rxSig,M);                          % Demodulate.
+%    decoded = vitdec(rx,trel,depth,'cont','hard');   % Decode.
+%    % Compute error rate.
+%    [nErrors, BER5(n)] = biterr(tx(1:end-depth),decoded(depth+1:end));
+% end
+% semilogy(SNR, BER5,'r','LineWidth',1.5);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% [133 171]
+depth=7;
+Generator=[133 171];
+trel = poly2trellis(depth,Generator);               % Trellis
+code = convenc(tx,trel);                            % Encode the message.
+
+pskSig = pskmod(code,M);                            % PSK signal
+
+%% Compute error rate for different values of SNR.
+SNR = 0:.5:5;                                       % Range of SNR values, in dB.
+for n = 1:length(SNR)
+   rxSig = awgn(pskSig,SNR(n),'measured');          % Add Gaussian noise.
+   rx = pskdemod(rxSig,M);                          % Demodulate.
+   decoded = vitdec(rx,trel,depth,'cont','hard');   % Decode.
+   % Compute error rate.
+   [nErrors, BER7(n)] = biterr(tx(1:end-depth),decoded(depth+1:end));
+end
+semilogy(SNR, BER7,'g','LineWidth',1.5);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% [561 753]
+depth=9;
+Generator=[561 753];
+trel = poly2trellis(depth,Generator);               % Trellis
+code = convenc(tx,trel);                            % Encode the message.
+
+pskSig = pskmod(code,M);                            % PSK signal
+
+% Compute error rate for different values of SNR.
+SNR = 0:.5:5;                                       % Range of SNR values, in dB.
+for n = 1:length(SNR)
+   rxSig = awgn(pskSig,SNR(n),'measured');          % Add Gaussian noise.
+   rx = pskdemod(rxSig,M);                          % Demodulate.
+   decoded = vitdec(rx,trel,depth,'cont','hard');   % Decode.
+   % Compute error rate.
+   [nErrors, BER9(n)] = biterr(tx(1:end-depth),decoded(depth+1:end));
+end
+semilogy(SNR, BER9,'k','LineWidth',1.5);
+legend('uncoded','K=3','K=7','K=9');%
+hold off;
+##### SOURCE END #####
+-->
+   </body>
+</html>

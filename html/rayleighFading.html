@@ -1,0 +1,189 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>rayleighFading</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-06-25">
+      <meta name="m-file" content="rayleighFading"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">Rayleigh Ditribution resulting from the Simulation of Fading Channel</a></li>
+               <li><a href="#2">Distribution chart</a></li>
+               <li><a href="#3">Received field</a></li>
+               <li><a href="#4">Probability of exceed a given attenuation (%)</a></li>
+            </ul>
+         </div>
+         <h2>Rayleigh Ditribution resulting from the Simulation of Fading Channel<a name="1"></a></h2>
+         <p>Copyright 2007 Telecommunications Lab</p><pre class="codeinput">N=5000;									<span class="comment">%Number of paths</span>
+t=0.0001:10/N:10;						<span class="comment">%Time range</span>
+fc=900*10.^6; 							<span class="comment">%Carrier frequency</span>
+wc=2*pi*fc;
+v=30/3600;								<span class="comment">%Receiver speed[km/h]</span>
+c=300*10^3;								<span class="comment">%Light speed</span>
+wm=wc*(v/c);							<span class="comment">%Maximum shift</span>
+fm=wm/(2*pi);							<span class="comment">%Doppler shift</span>
+<span class="keyword">for</span> i=1:N
+   A(i)=(2*pi/N)*i;                     <span class="comment">%Azimuthal angles</span>
+   wn(i)=wm*cos(A(i));
+   O(i)=(pi*i)/(N+1);
+	 xc(i)=2*cos(wn(i)*t(i)).*cos(O(i))+cos(wm*t(i));
+  xs(i)=2*cos(wn(i)*t(i)).*sin(O(i));
+ T(i)=(1/(2*N+1)^0.5).*(xc(i)+j*xs(i));<span class="comment">%Complex envelope</span>
+ <span class="keyword">end</span>
+ M=mean(abs(T));						<span class="comment">%Mean</span>
+ MdB=20*log10(M);
+ TdB=floor(20*log10(abs(T)));           <span class="comment">%Field [dB]</span>
+ z1=hist(abs(T));
+ z=hist(TdB,9);
+n=0;
+<span class="keyword">for</span> k=1:9
+   n=n+z(k);
+<span class="keyword">end</span>
+<span class="keyword">for</span> k=1:9
+    P(k)=z(k)/n;
+<span class="keyword">end</span>
+  f(1)=P(1);
+<span class="keyword">for</span> x=2:9
+    f(x)=f(x-1)+P(x);
+    F(10-x)=f(x);
+<span class="keyword">end</span>
+</pre><h2>Distribution chart<a name="2"></a></h2><pre class="codeinput">plot(z1)
+title(<span class="string">'Rayleigh distribution'</span>);
+</pre><img vspace="5" hspace="5" src="rayleighFading_01.png"> <h2>Received field<a name="3"></a></h2><pre class="codeinput">semilogy(t,abs(T)/max(abs(T)),<span class="string">'r'</span>)      <span class="comment">%Fading graphic</span>
+title(<span class="string">'Received field'</span>);
+ylabel(<span class="string">'Received field intensity'</span>);
+xlabel(<span class="string">'time'</span>);
+grid <span class="string">on</span>
+</pre><img vspace="5" hspace="5" src="rayleighFading_02.png"> <h2>Probability of exceed a given attenuation (%)<a name="4"></a></h2><pre class="codeinput">loglog(100*F,<span class="string">'m'</span>);<span class="comment">%Indicates the probability of exceed a given attenuation</span>
+title(<span class="string">'Probability of exceed a given attenuation (%)'</span>);
+</pre><img vspace="5" hspace="5" src="rayleighFading_03.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Rayleigh Ditribution resulting from the Simulation of Fading Channel
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+N=5000;									%Number of paths
+t=0.0001:10/N:10;						%Time range
+fc=900*10.^6; 							%Carrier frequency
+wc=2*pi*fc;								
+v=30/3600;								%Receiver speed[km/h]
+c=300*10^3;								%Light speed
+wm=wc*(v/c);							%Maximum shift
+fm=wm/(2*pi);							%Doppler shift
+for i=1:N
+   A(i)=(2*pi/N)*i;                     %Azimuthal angles
+   wn(i)=wm*cos(A(i));
+   O(i)=(pi*i)/(N+1);
+	 xc(i)=2*cos(wn(i)*t(i)).*cos(O(i))+cos(wm*t(i));
+  xs(i)=2*cos(wn(i)*t(i)).*sin(O(i));
+ T(i)=(1/(2*N+1)^0.5).*(xc(i)+j*xs(i));%Complex envelope
+ end
+ M=mean(abs(T));						%Mean
+ MdB=20*log10(M);
+ TdB=floor(20*log10(abs(T)));           %Field [dB]
+ z1=hist(abs(T));
+ z=hist(TdB,9);
+n=0;
+for k=1:9
+   n=n+z(k);
+end
+for k=1:9
+    P(k)=z(k)/n;
+end
+  f(1)=P(1);
+for x=2:9
+    f(x)=f(x-1)+P(x);
+    F(10-x)=f(x);
+end
+
+%%
+%% Distribution chart
+plot(z1) 								
+title('Rayleigh distribution');
+
+%%
+%% Received field
+semilogy(t,abs(T)/max(abs(T)),'r')      %Fading graphic
+title('Received field');
+ylabel('Received field intensity');
+xlabel('time');
+grid on
+
+%%
+%% Probability of exceed a given attenuation (%)
+loglog(100*F,'m');%Indicates the probability of exceed a given attenuation
+title('Probability of exceed a given attenuation (%)');
+##### SOURCE END #####
+-->
+   </body>
+</html>

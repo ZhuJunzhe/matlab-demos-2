@@ -1,0 +1,146 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Doppler Spectrum Spreading</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-06-22">
+      <meta name="m-file" content="DopplerSpreading"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Doppler Spectrum Spreading</h1>
+         <introduction>
+            <p>Copyright 2007 Telecommunications Lab</p>
+         </introduction><pre class="codeinput">Fs = 100;                              <span class="comment">% Sampling frequency 50000 Hz</span>
+T = 2/100;                             <span class="comment">% Symbol time interval [s].</span>
+t = -40*T:1/Fs:40*T;                   <span class="comment">% Time vector (sampling intervals)</span>
+t = t+0.00000001;                      <span class="comment">% Otherwise, the denominator would be zero at t=0</span>
+f = 0:1/Fs:2;
+r = 0.25;                              <span class="comment">% Roll-off factor</span>
+ts=10^-3;                              <span class="comment">% Channel Sampling Rate</span>
+fd=2;                                  <span class="comment">% Maximal Doppler Shift</span>
+chan = rayleighchan(ts,fd,0,1);        <span class="comment">% Channel Design</span>
+
+
+<span class="comment">% Root Raised-Cosine FIR filter</span>
+p = T*((4*r*cos(pi*t/T*(1+r))+(T./t).*sin(pi*(t/T)*(1-r))))./((1-(4*r*(t/T)).^2)*pi*sqrt(T)); <span class="comment">%normed on the viewed region</span>
+
+<span class="comment">% Cosine-Roll-Off frequency response</span>
+
+P=abs(fft((p).*(hamming(length(p)))'));
+
+p_ = filter(chan,p);
+
+P_=abs(fft((p_).*(hamming(length(p_)))'));
+<span class="comment">% Plotting</span>
+plot(P/max(P),<span class="string">'r'</span>,<span class="string">'LineWidth'</span>,1.5);hold <span class="string">on</span>;plot(P_/max(P_),<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,1.5);
+legend(<span class="string">'Original Spectrum'</span>,<span class="string">'Doppler-Spread Spectrum'</span>);title(<span class="string">'Comparison of Original spectrum with Doppler-spread spectrum.'</span>);
+axis([0 100 -.1 1.1]);
+grid <span class="string">on</span>;
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="DopplerSpreading_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Doppler Spectrum Spreading
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+%%
+% 
+Fs = 100;                              % Sampling frequency 50000 Hz
+T = 2/100;                             % Symbol time interval [s].
+t = -40*T:1/Fs:40*T;                   % Time vector (sampling intervals)
+t = t+0.00000001;                      % Otherwise, the denominator would be zero at t=0
+f = 0:1/Fs:2;
+r = 0.25;                              % Roll-off factor
+ts=10^-3;                              % Channel Sampling Rate
+fd=2;                                  % Maximal Doppler Shift
+chan = rayleighchan(ts,fd,0,1);        % Channel Design
+
+
+% Root Raised-Cosine FIR filter
+p = T*((4*r*cos(pi*t/T*(1+r))+(T./t).*sin(pi*(t/T)*(1-r))))./((1-(4*r*(t/T)).^2)*pi*sqrt(T)); %normed on the viewed region
+
+% Cosine-Roll-Off frequency response
+
+P=abs(fft((p).*(hamming(length(p)))'));
+
+p_ = filter(chan,p);
+
+P_=abs(fft((p_).*(hamming(length(p_)))'));
+% Plotting
+plot(P/max(P),'r','LineWidth',1.5);hold on;plot(P_/max(P_),'b','LineWidth',1.5);
+legend('Original Spectrum','Doppler-Spread Spectrum');title('Comparison of Original spectrum with Doppler-spread spectrum.');
+axis([0 100 -.1 1.1]);
+grid on;
+hold off;
+##### SOURCE END #####
+-->
+   </body>
+</html>

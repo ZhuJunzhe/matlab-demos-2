@@ -1,0 +1,245 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Symbol Error Rate for BPSK</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-07-25">
+      <meta name="m-file" content="sim_erfc"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Symbol Error Rate for BPSK</h1>
+         <introduction>
+            <p>Copyright 2007 Telecommunications Lab</p>
+         </introduction><pre class="codeinput">T               = .2;                                                       <span class="comment">% Symbol duration</span>
+f_sa            = 20;                                                       <span class="comment">% Sample frequency</span>
+delta_t         = 1/f_sa;
+symbols_per_sim = 100;
+ES_N0_dB        = [0:5];
+sims_loops       = 1e3;
+
+<span class="comment">%****************** send filter ************************</span>
+h_tx = ones(T/delta_t,1)*1/sqrt(T);
+<span class="comment">%**********************************</span>
+chan = ricianchan(1/f_sa,1,18);
+
+ES_N0_lin = 10.^(0.1*ES_N0_dB);                                             <span class="comment">% ES/N0</span>
+SER       = []
+<span class="comment">% SER_rice =[]</span>
+<span class="keyword">for</span> current_ES_N0 = ES_N0_lin
+
+    sigma       = sqrt((1/current_ES_N0)/(2*delta_t ))
+    sym_err     = 0;
+    <span class="keyword">for</span> inner_loop = 1:sims_loops
+        alpha_ = randn(symbols_per_sim,1)*2-1;                              <span class="comment">% Generate bits</span>
+        alpha  = sign(alpha_);
+        s(1:T*f_sa:T*symbols_per_sim*f_sa,1) = alpha*f_sa;                  <span class="comment">% Generate signal s(t)</span>
+
+        s_TX = conv(s,h_tx)./f_sa;                                          <span class="comment">% Signal that can be sended over the channel</span>
+        s_RX = s_TX + sigma*randn(length(s_TX),1);                          <span class="comment">% Add noise</span>
+
+        r    = conv(s_RX, conj(flipud(h_tx)))./f_sa;                        <span class="comment">% Matched filter</span>
+
+        r_sampled = r(T*f_sa:T*f_sa:T*f_sa+T*f_sa*symbols_per_sim-1);       <span class="comment">% Sampling</span>
+        r_sign       = sign(r_sampled);                                     <span class="comment">% threshold decision</span>
+        sym_err = sym_err + sum(abs(alpha-r_sign))/2;                       <span class="comment">% compute sym_err</span>
+
+    <span class="keyword">end</span>
+
+    SER = [SER; sym_err/(length(alpha)*inner_loop)];                         <span class="comment">% SER</span>
+<span class="keyword">end</span>
+<span class="comment">%</span>
+<span class="comment">% for current_ES_N0 = ES_N0_lin</span>
+<span class="comment">%</span>
+<span class="comment">%     sigma       = sqrt((1/current_ES_N0)/(2*delta_t ))</span>
+<span class="comment">%     sym_err_rice     = 0;</span>
+<span class="comment">%     for inner_loop = 1:sims_loops</span>
+<span class="comment">%         alpha_ = randn(symbols_per_sim,1)*2-1;                              % Generate bits</span>
+<span class="comment">%         alpha  = sign(alpha_);</span>
+<span class="comment">%         s(1:T*f_sa:T*symbols_per_sim*f_sa,1) = alpha*f_sa;                  % Generate signal s(t)</span>
+<span class="comment">%</span>
+<span class="comment">%         s_TX = conv(s,h_tx)./f_sa;                                          % Signal that can be sended over the channel</span>
+<span class="comment">%         s_RX_Rice=filter(chan,s_TX);</span>
+<span class="comment">%</span>
+<span class="comment">%         r_rice=conv(s_RX_Rice, conj(flipud(h_tx)))./f_sa;                        % Matched filter</span>
+<span class="comment">%         r_sampled_rice = r_rice(T*f_sa:T*f_sa:T*f_sa+T*f_sa*symbols_per_sim-1);       % Sampling</span>
+<span class="comment">%         r_sign_rice       = sign(r_sampled_rice);                                     % threshold decision</span>
+<span class="comment">%         sym_err_rice = sym_err_rice + sum(abs(alpha-r_sign_rice))/2;                       % compute sym_err</span>
+<span class="comment">%</span>
+<span class="comment">%     end</span>
+<span class="comment">%</span>
+<span class="comment">%    SER_rice = [SER_rice; sym_err_rice/(length(alpha)*inner_loop)] ;</span>
+<span class="comment">% end</span>
+<span class="comment">%************************************* Plotting **********************************</span>
+SER=10*log10(SER);
+<span class="comment">% SER_rice=10*log10(SER)</span>
+
+hold <span class="string">on</span>
+plot(ES_N0_dB, SER);
+<span class="comment">% plot(ES_N0_dB, SER_rice)</span>
+title(<span class="string">'symbol error rate for BPSK'</span>)
+xlabel(<span class="string">'E_S/N_0  [dB] '</span>)
+ylabel(<span class="string">'SER'</span>)
+grid <span class="string">on</span>
+hold <span class="string">on</span>
+Ps = 1/2 * erfc( sqrt( ES_N0_lin ) );                                        <span class="comment">%Theoretical SER</span>
+Ps=10*log10(Ps)
+plot(ES_N0_dB,Ps,<span class="string">'r'</span>)
+legend(<span class="string">'simulated   SER'</span>,<span class="string">'theoretical SER'</span>)
+hold <span class="string">off</span>;
+</pre><pre class="codeoutput">
+</pre><img vspace="5" hspace="5" src="sim_erfc_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% symbol error rate for BPSK
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+%%
+% 
+T               = .2;                                                       % Symbol duration
+f_sa            = 20;                                                       % Sample frequency
+delta_t         = 1/f_sa;       
+symbols_per_sim = 100;  
+ES_N0_dB        = [0:5];
+sims_loops       = 1e3;
+
+%****************** send filter ************************
+h_tx = ones(T/delta_t,1)*1/sqrt(T);
+%**********************************
+chan = ricianchan(1/f_sa,1,18);
+
+ES_N0_lin = 10.^(0.1*ES_N0_dB);                                             % ES/N0 
+SER       = []
+% SER_rice =[]
+for current_ES_N0 = ES_N0_lin
+
+    sigma       = sqrt((1/current_ES_N0)/(2*delta_t ))
+    sym_err     = 0;
+    for inner_loop = 1:sims_loops
+        alpha_ = randn(symbols_per_sim,1)*2-1;                              % Generate bits                   
+        alpha  = sign(alpha_);
+        s(1:T*f_sa:T*symbols_per_sim*f_sa,1) = alpha*f_sa;                  % Generate signal s(t)      
+        
+        s_TX = conv(s,h_tx)./f_sa;                                          % Signal that can be sended over the channel                    
+        s_RX = s_TX + sigma*randn(length(s_TX),1);                          % Add noise
+        
+        r    = conv(s_RX, conj(flipud(h_tx)))./f_sa;                        % Matched filter 
+        
+        r_sampled = r(T*f_sa:T*f_sa:T*f_sa+T*f_sa*symbols_per_sim-1);       % Sampling
+        r_sign       = sign(r_sampled);                                     % threshold decision   
+        sym_err = sym_err + sum(abs(alpha-r_sign))/2;                       % compute sym_err
+        
+    end
+    
+    SER = [SER; sym_err/(length(alpha)*inner_loop)];                         % SER
+end
+% 
+% for current_ES_N0 = ES_N0_lin
+% 
+%     sigma       = sqrt((1/current_ES_N0)/(2*delta_t ))
+%     sym_err_rice     = 0;
+%     for inner_loop = 1:sims_loops
+%         alpha_ = randn(symbols_per_sim,1)*2-1;                              % Generate bits                   
+%         alpha  = sign(alpha_);
+%         s(1:T*f_sa:T*symbols_per_sim*f_sa,1) = alpha*f_sa;                  % Generate signal s(t)      
+%         
+%         s_TX = conv(s,h_tx)./f_sa;                                          % Signal that can be sended over the channel                    
+%         s_RX_Rice=filter(chan,s_TX);
+%         
+%         r_rice=conv(s_RX_Rice, conj(flipud(h_tx)))./f_sa;                        % Matched filter 
+%         r_sampled_rice = r_rice(T*f_sa:T*f_sa:T*f_sa+T*f_sa*symbols_per_sim-1);       % Sampling
+%         r_sign_rice       = sign(r_sampled_rice);                                     % threshold decision   
+%         sym_err_rice = sym_err_rice + sum(abs(alpha-r_sign_rice))/2;                       % compute sym_err
+%         
+%     end
+%     
+%    SER_rice = [SER_rice; sym_err_rice/(length(alpha)*inner_loop)] ;  
+% end
+%************************************* Plotting **********************************
+SER=10*log10(SER);
+% SER_rice=10*log10(SER)
+
+hold on
+plot(ES_N0_dB, SER);
+% plot(ES_N0_dB, SER_rice)
+title('symbol error rate for BPSK')
+xlabel('E_S/N_0  [dB] ')
+ylabel('SER')
+grid on
+hold on
+Ps = 1/2 * erfc( sqrt( ES_N0_lin ) );                                        %Theoretical SER 
+Ps=10*log10(Ps)
+plot(ES_N0_dB,Ps,'r')
+legend('simulated   SER','theoretical SER')
+hold off;
+##### SOURCE END #####
+-->
+   </body>
+</html>

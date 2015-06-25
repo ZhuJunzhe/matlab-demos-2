@@ -1,0 +1,99 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>rayleigh_dist</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-07-25">
+      <meta name="m-file" content="rayleigh_dist"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content"><pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+
+x = [0:0.01:5];
+p = raylpdf_(x);
+plot(x,p,<span class="string">'LineWidth'</span>,2);
+xlabel(<span class="string">'x'</span>);ylabel(<span class="string">'rayleigh(x)'</span>);
+title(<span class="string">'Rayleigh Distribution'</span>)
+grid <span class="string">on</span>;
+</pre><img vspace="5" hspace="5" src="rayleigh_dist_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+clear all;
+close all;
+
+x = [0:0.01:5];
+p = raylpdf_(x);
+plot(x,p,'LineWidth',2);
+xlabel('x');ylabel('rayleigh(x)');
+title('Rayleigh Distribution')
+grid on;
+##### SOURCE END #####
+-->
+   </body>
+</html>

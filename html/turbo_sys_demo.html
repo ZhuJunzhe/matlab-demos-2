@@ -1,0 +1,258 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>BER performance with Turbo Code</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-06-25">
+      <meta name="m-file" content="turbo_sys_demo"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>BER performance with Turbo Code</h1>
+         <p>Copyright 2007 Telecommunications Lab</p>
+         <p></p><pre class="codeinput">   L_total = 400;	 <span class="comment">% infomation bits plus tail bits</span>
+   nframemax = 100;  <span class="comment">%frame number</span>
+<span class="comment">% Code generator</span>
+g = [ 1 1 1; 1 0 1 ]; <span class="comment">%(7,5)</span>
+<span class="comment">%g = [1 1 0 1; 1 1 1 1];%(15,17)</span>
+<span class="comment">%g = [1 1 1 1 1; 1 0 0 0 1];%(37,21)</span>
+<span class="comment">%g  = [1 1 1 1 0 0 1 ; 1 0 1 1 0 1 1];%(171,133)</span>
+[n,K] = size(g);
+m = K - 1;
+nstates = 2^m;
+puncture = 1;
+
+<span class="comment">% Code rate</span>
+rate = 1/(2+puncture);
+
+<span class="comment">% Fading amplitude; a=1 in AWGN channel</span>
+a = 1;
+
+<span class="comment">% Number of iterations</span>
+   niter = 3;
+
+ EbN0db = [0:.5:2];
+
+<span class="keyword">for</span> nEN = 1:length(EbN0db)
+   en = 10^(EbN0db(nEN)/10);      <span class="comment">% convert Eb/N0 from unit db to normal numbers</span>
+   L_c = 4*a*en*rate; 	<span class="comment">% reliability value of the channel</span>
+   sigma = 1/sqrt(2*rate*en); 	<span class="comment">% standard deviation of AWGN noise</span>
+
+<span class="comment">% Clear bit error counter and frame error counter</span>
+   errs(nEN,1:niter) = zeros(1,niter);
+   errs_uncoded(nEN) = zeros(1,1);
+   nferr(nEN,1:niter) = zeros(1,niter);
+
+   nframe = 0;    <span class="comment">% clear counter of transmitted frames</span>
+   <span class="keyword">while</span> nframe&lt;nframemax
+      nframe = nframe + 1;
+      x = round(rand(1, L_total-m));    <span class="comment">% info. bits</span>
+      [temp, alpha] = sort(rand(1,L_total));        <span class="comment">% random interleaver mapping</span>
+      en_output = encoderm( x, g, alpha, puncture ) ; <span class="comment">% encoder output (+1/-1)</span>
+      <span class="comment">%r = awgn(en_output,nEN,'measured');</span>
+      r = en_output+sigma*randn(1,L_total*(2+puncture)); <span class="comment">% received bits</span>
+      r_uncoded=awgn((2 * x - ones(size(x))),nEN,<span class="string">'measured'</span>);<span class="comment">%x+sigma*randn(1,L_total-m);</span>
+      yk = demultiplex(r,alpha,puncture); <span class="comment">% demultiplex to get input for decoder 1 and 2</span>
+
+<span class="comment">% Scale the received bits</span>
+      rec_s = 0.5*L_c*yk;
+	  rec_s_uncoded = r_uncoded;<span class="comment">%*2*en;</span>
+<span class="comment">% Initialize extrinsic information</span>
+      L_e(1:L_total) = zeros(1,L_total);
+
+      <span class="keyword">for</span> iter = 1:niter
+<span class="comment">% Decoder one</span>
+         L_a(alpha) = L_e;  <span class="comment">% a priori info.</span>
+         L_all = logmapo(rec_s(1,:), g, L_a, 1);  <span class="comment">% complete info.</span>
+         L_e = L_all - 2*rec_s(1,1:2:2*L_total) - L_a;  <span class="comment">% extrinsic info.</span>
+
+<span class="comment">% Decoder two</span>
+         L_a = L_e(alpha);  <span class="comment">% a priori info.</span>
+         L_all = logmapo(rec_s(2,:), g, L_a, 2);  <span class="comment">% complete info.</span>
+         L_e = L_all - 2*rec_s(2,1:2:2*L_total) - L_a;  <span class="comment">% extrinsic info.</span>
+
+<span class="comment">% Estimate the info. bits</span>
+         xhat(alpha) = (sign(L_all)+1)/2;
+<span class="comment">% Number of bit errors in current iteration</span>
+         err(iter) = length(find(xhat(1:L_total-m)~=x));
+<span class="comment">% Count frame errors for the current iteration</span>
+         <span class="keyword">if</span> err(iter)&gt;0
+            nferr(nEN,iter) = nferr(nEN,iter)+1;
+         <span class="keyword">end</span>
+      <span class="keyword">end</span>	<span class="comment">%iter</span>
+      		 xhat_uncoded = (sign(rec_s_uncoded)+1)/2;
+<span class="comment">% Total number of bit errors for all iterations</span>
+      errs(nEN,1:niter) = errs(nEN,1:niter) + err(1:niter);
+	  errs_uncoded(nEN) =errs_uncoded(nEN)+length(find(xhat_uncoded~=x));
+   <span class="keyword">end</span>		<span class="comment">%while</span>
+ber(nEN,1:niter) = errs(nEN,1:niter)/nframemax/(L_total-m);
+ber_uncoded(nEN)=errs_uncoded(nEN)/nframemax/(L_total-m);
+<span class="comment">% Frame error rate</span>
+fer(nEN,1:niter) = nferr(nEN,1:niter)/nframe;
+<span class="keyword">end</span> 		<span class="comment">%nEN</span>
+<span class="comment">%figure;</span>
+semilogy(EbN0db,ber_uncoded,<span class="string">'gr'</span>,<span class="string">'LineWidth'</span>,2);grid <span class="string">on</span>;hold <span class="string">on</span>;semilogy(EbN0db,ber(:,1),<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,2);hold <span class="string">on</span>;semilogy(EbN0db,ber(:,2),<span class="string">'r'</span>,<span class="string">'LineWidth'</span>,2);hold <span class="string">on</span>;semilogy(EbN0db,ber(:,3),<span class="string">'c'</span>,<span class="string">'LineWidth'</span>,2);legend(<span class="string">'uncoded'</span>,<span class="string">'1 iteration'</span>,<span class="string">'2 iterations'</span>,<span class="string">'3 iterations'</span>);title(<span class="string">'BER given by Turbo-Coding'</span>);xlabel(<span class="string">'E_b/N_0 [dB]'</span>); ylabel(<span class="string">'BER'</span>);
+<span class="comment">%hold on;semilogy(EbN0db,ber(:,2),'r','LineWidth',2);grid on;</span>
+<span class="comment">%save turbo_sys_demo EbN0db ber fer errs ber_uncoded</span>
+</pre><img vspace="5" hspace="5" src="turbo_sys_demo_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% BER performance with Turbo Code 
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+% 
+% Frame size
+   L_total = 400;	 % infomation bits plus tail bits
+   nframemax = 100;  %frame number
+% Code generator
+g = [ 1 1 1; 1 0 1 ]; %(7,5)
+%g = [1 1 0 1; 1 1 1 1];%(15,17)
+%g = [1 1 1 1 1; 1 0 0 0 1];%(37,21)
+%g  = [1 1 1 1 0 0 1 ; 1 0 1 1 0 1 1];%(171,133)
+[n,K] = size(g); 
+m = K - 1;
+nstates = 2^m;
+puncture = 1;
+
+% Code rate
+rate = 1/(2+puncture);   
+
+% Fading amplitude; a=1 in AWGN channel
+a = 1; 
+
+% Number of iterations
+   niter = 3;
+ 
+ EbN0db = [0:.5:2];
+
+for nEN = 1:length(EbN0db)
+   en = 10^(EbN0db(nEN)/10);      % convert Eb/N0 from unit db to normal numbers
+   L_c = 4*a*en*rate; 	% reliability value of the channel
+   sigma = 1/sqrt(2*rate*en); 	% standard deviation of AWGN noise
+
+% Clear bit error counter and frame error counter
+   errs(nEN,1:niter) = zeros(1,niter);
+   errs_uncoded(nEN) = zeros(1,1);
+   nferr(nEN,1:niter) = zeros(1,niter);
+
+   nframe = 0;    % clear counter of transmitted frames
+   while nframe<nframemax
+      nframe = nframe + 1;    
+      x = round(rand(1, L_total-m));    % info. bits
+      [temp, alpha] = sort(rand(1,L_total));        % random interleaver mapping
+      en_output = encoderm( x, g, alpha, puncture ) ; % encoder output (+1/-1)
+      %r = awgn(en_output,nEN,'measured');
+      r = en_output+sigma*randn(1,L_total*(2+puncture)); % received bits
+      r_uncoded=awgn((2 * x - ones(size(x))),nEN,'measured');%x+sigma*randn(1,L_total-m); 
+      yk = demultiplex(r,alpha,puncture); % demultiplex to get input for decoder 1 and 2
+      
+% Scale the received bits      
+      rec_s = 0.5*L_c*yk;
+	  rec_s_uncoded = r_uncoded;%*2*en;
+% Initialize extrinsic information      
+      L_e(1:L_total) = zeros(1,L_total);
+      
+      for iter = 1:niter
+% Decoder one
+         L_a(alpha) = L_e;  % a priori info. 
+         L_all = logmapo(rec_s(1,:), g, L_a, 1);  % complete info.
+         L_e = L_all - 2*rec_s(1,1:2:2*L_total) - L_a;  % extrinsic info.
+
+% Decoder two         
+         L_a = L_e(alpha);  % a priori info.
+         L_all = logmapo(rec_s(2,:), g, L_a, 2);  % complete info.  
+         L_e = L_all - 2*rec_s(2,1:2:2*L_total) - L_a;  % extrinsic info.
+         
+% Estimate the info. bits        
+         xhat(alpha) = (sign(L_all)+1)/2;
+% Number of bit errors in current iteration
+         err(iter) = length(find(xhat(1:L_total-m)~=x));
+% Count frame errors for the current iteration
+         if err(iter)>0
+            nferr(nEN,iter) = nferr(nEN,iter)+1;
+         end   
+      end	%iter
+      		 xhat_uncoded = (sign(rec_s_uncoded)+1)/2;
+% Total number of bit errors for all iterations
+      errs(nEN,1:niter) = errs(nEN,1:niter) + err(1:niter);
+	  errs_uncoded(nEN) =errs_uncoded(nEN)+length(find(xhat_uncoded~=x));
+   end		%while 
+ber(nEN,1:niter) = errs(nEN,1:niter)/nframemax/(L_total-m);
+ber_uncoded(nEN)=errs_uncoded(nEN)/nframemax/(L_total-m);
+% Frame error rate
+fer(nEN,1:niter) = nferr(nEN,1:niter)/nframe;
+end 		%nEN
+%figure;
+semilogy(EbN0db,ber_uncoded,'gr','LineWidth',2);grid on;hold on;semilogy(EbN0db,ber(:,1),'b','LineWidth',2);hold on;semilogy(EbN0db,ber(:,2),'r','LineWidth',2);hold on;semilogy(EbN0db,ber(:,3),'c','LineWidth',2);legend('uncoded','1 iteration','2 iterations','3 iterations');title('BER given by Turbo-Coding');xlabel('E_b/N_0 [dB]'); ylabel('BER');
+%hold on;semilogy(EbN0db,ber(:,2),'r','LineWidth',2);grid on;
+%save turbo_sys_demo EbN0db ber fer errs ber_uncoded
+##### SOURCE END #####
+-->
+   </body>
+</html>

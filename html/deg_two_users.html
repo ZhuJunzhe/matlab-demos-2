@@ -1,0 +1,127 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Performance degradation of first of two users</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-06-25">
+      <meta name="m-file" content="deg_two_users"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Performance degradation of first of two users</h1>
+         <p>Copyright 2007 Telecommunications Lab</p><pre class="codeinput">K=2;
+Q=4086;
+alphaK_alpha1=[-10:1:20];
+alphaK_alpha1_lin=10.^(0.1*alphaK_alpha1);
+alpha1=ones(1,31);
+i=1;
+<span class="keyword">for</span> (EB_N_dB=[0:3:9]),
+EB_N_lin=10.^(0.1*EB_N_dB);
+Dglin(i,:)=1+((K-1)/Q).*alpha1.^2.*EB_N_lin.*((1/(K-1))*(alphaK_alpha1_lin).^2);
+Dg(i,:)=10*log10(Dglin(i,:));
+i=i+1;
+<span class="keyword">end</span>
+
+plot(alphaK_alpha1, Dg(1,:),alphaK_alpha1, Dg(2,:),alphaK_alpha1, Dg(3,:),alphaK_alpha1, Dg(4,:),<span class="string">'LineWidth'</span>,1.5);
+legend(<span class="string">'E_b/N_0=0'</span>,<span class="string">'E_b/N_0=3'</span>,<span class="string">'E_b/N_0=6'</span>,<span class="string">'E_b/N_0=9'</span>)
+title(<span class="string">'Performance degradation of first of two users as a function ofrelative power and processing gain'</span>)
+xlabel(<span class="string">'\alpha_2/\alpha_1 [dB]'</span>)
+axis([-10 20 0 16])
+ylabel(<span class="string">'Degradation [dB]'</span>)
+grid <span class="string">on</span>;
+</pre><img vspace="5" hspace="5" src="deg_two_users_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Performance degradation of first of two users
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+K=2;
+Q=4086;
+alphaK_alpha1=[-10:1:20];
+alphaK_alpha1_lin=10.^(0.1*alphaK_alpha1);
+alpha1=ones(1,31);
+i=1;
+for (EB_N_dB=[0:3:9]),
+EB_N_lin=10.^(0.1*EB_N_dB);
+Dglin(i,:)=1+((K-1)/Q).*alpha1.^2.*EB_N_lin.*((1/(K-1))*(alphaK_alpha1_lin).^2);
+Dg(i,:)=10*log10(Dglin(i,:));
+i=i+1;
+end
+
+plot(alphaK_alpha1, Dg(1,:),alphaK_alpha1, Dg(2,:),alphaK_alpha1, Dg(3,:),alphaK_alpha1, Dg(4,:),'LineWidth',1.5);
+legend('E_b/N_0=0','E_b/N_0=3','E_b/N_0=6','E_b/N_0=9')
+title('Performance degradation of first of two users as a function ofrelative power and processing gain')
+xlabel('\alpha_2/\alpha_1 [dB]')
+axis([-10 20 0 16])
+ylabel('Degradation [dB]')
+grid on;
+##### SOURCE END #####
+-->
+   </body>
+</html>

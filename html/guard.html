@@ -1,0 +1,164 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Guard Interval</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-07-25">
+      <meta name="m-file" content="guard"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Guard Interval</h1>
+         <introduction>
+            <p>Copyright 2007 Telecommunications Lab</p>
+         </introduction><pre class="codeinput">ts=10^(-3);
+fs=1/ts;
+
+t_guard=.2;
+
+t_guard_=t_guard*fs;
+
+
+<span class="comment">%Construct two symbols</span>
+t1=[0:ts:1];
+f=2;
+
+s1=cos(2*pi*f*t1);
+s2=cos(2*pi*f*t1);
+
+s=horzcat(s1(fs+1-t_guard_:end),s1,s2(fs+1-t_guard_:end),s2);
+
+<span class="comment">%Channel paths</span>
+delay=.05;
+d_s1=zeros(1,length(s));
+d_s2=zeros(1,length(s));
+d_s3=zeros(1,length(s));
+d_s1(length(s1):end)=s((length(s1)-delay*fs):length(s)-delay*fs);
+d_s1=1/2*(d_s1);
+d_s2(length(s1):end)=s((length(s1)-2*delay*fs):length(s)-2*delay*fs);
+d_s2=1/2*(d_s2);
+d_s3(length(s1):end)=s((length(s1)-3*delay*fs):length(s)-3*delay*fs);
+d_s3=1/2*(d_s3);
+
+<span class="comment">%plotting</span>
+
+plot(s,<span class="string">'g'</span>,<span class="string">'LineWidth'</span>,1.5);hold <span class="string">on</span>; plot(d_s1,<span class="string">'LineWidth'</span>,1.5);hold <span class="string">on</span>; plot(d_s1+d_s2+d_s3,<span class="string">'r'</span>,<span class="string">'LineWidth'</span>,1.5); hold <span class="string">on</span>;plot(d_s2,<span class="string">'LineWidth'</span>,1.5);hold <span class="string">on</span>; plot(d_s3,<span class="string">'LineWidth'</span>,1.5);legend(<span class="string">'original signal'</span>,<span class="string">'delayed paths'</span>,<span class="string">'resulting signal'</span>)
+axis([1200 2400 -2 2]);grid <span class="string">on</span>;
+set(gca,<span class="string">'XTick'</span>,[0:1400:24000]);
+set(gca,<span class="string">'XTickLabel'</span>,[<span class="string">'  -T_d'</span>;<span class="string">'   0  '</span>])
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="guard_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Guard Interval
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+%%
+% 
+ts=10^(-3);
+fs=1/ts;
+
+t_guard=.2;
+
+t_guard_=t_guard*fs;
+
+
+%Construct two symbols
+t1=[0:ts:1];
+f=2;
+
+s1=cos(2*pi*f*t1);
+s2=cos(2*pi*f*t1);
+
+s=horzcat(s1(fs+1-t_guard_:end),s1,s2(fs+1-t_guard_:end),s2);
+
+%Channel paths
+delay=.05;
+d_s1=zeros(1,length(s));
+d_s2=zeros(1,length(s));
+d_s3=zeros(1,length(s));
+d_s1(length(s1):end)=s((length(s1)-delay*fs):length(s)-delay*fs);
+d_s1=1/2*(d_s1);
+d_s2(length(s1):end)=s((length(s1)-2*delay*fs):length(s)-2*delay*fs);
+d_s2=1/2*(d_s2);
+d_s3(length(s1):end)=s((length(s1)-3*delay*fs):length(s)-3*delay*fs);
+d_s3=1/2*(d_s3);
+
+%plotting
+
+plot(s,'g','LineWidth',1.5);hold on; plot(d_s1,'LineWidth',1.5);hold on; plot(d_s1+d_s2+d_s3,'r','LineWidth',1.5); hold on;plot(d_s2,'LineWidth',1.5);hold on; plot(d_s3,'LineWidth',1.5);legend('original signal','delayed paths','resulting signal')
+axis([1200 2400 -2 2]);grid on;
+set(gca,'XTick',[0:1400:24000]);
+set(gca,'XTickLabel',['  -T_d';'   0  '])
+hold off;
+##### SOURCE END #####
+-->
+   </body>
+</html>

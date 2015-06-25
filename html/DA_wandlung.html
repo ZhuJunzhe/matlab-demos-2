@@ -1,0 +1,116 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>DAC</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-07-25">
+      <meta name="m-file" content="DA_wandlung"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>DAC</h1>
+         <introduction>
+            <p>Copyright 2007 Telecommunications Lab</p>
+         </introduction><pre class="codeinput">t = (-4:4)';                    <span class="comment">% a column vector of time samples</span>
+randn(<span class="string">'seed'</span>,0);
+<span class="comment">%x = randn(size(t));            % a column vector of data</span>
+x=[0; 0;0;-.5;1;.5;0;0;0];
+<span class="comment">% ts is times at which to interpolate data</span>
+ts = linspace(-5,5,100)';
+y1= sinc(ts(:,ones(size(t))) - t(:,ones(size(ts)))')*[0; 0;0;-.5;0 ;0 ;0 ;0 ;0];
+y2= sinc(ts(:,ones(size(t))) - t(:,ones(size(ts)))')*[0; 0;0; 0 ;1 ;0 ;0 ;0 ;0];
+y3= sinc(ts(:,ones(size(t))) - t(:,ones(size(ts)))')*[0; 0;0; 0 ;0 ;.5;0 ;0 ;0];
+y = sinc(ts(:,ones(size(t))) - t(:,ones(size(ts)))')*x;
+plot(t,x,<span class="string">'o'</span>,ts,y,ts,y1,<span class="string">'-'</span>,ts,y2,ts,y3,<span class="string">':'</span>,<span class="string">'LineWidth'</span>,1.5);
+grid <span class="string">on</span>;
+</pre><img vspace="5" hspace="5" src="DA_wandlung_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% DAC
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+%%
+% 
+t = (-4:4)';                    % a column vector of time samples
+randn('seed',0);
+%x = randn(size(t));            % a column vector of data
+x=[0; 0;0;-.5;1;.5;0;0;0];
+% ts is times at which to interpolate data
+ts = linspace(-5,5,100)';
+y1= sinc(ts(:,ones(size(t))) - t(:,ones(size(ts)))')*[0; 0;0;-.5;0 ;0 ;0 ;0 ;0];
+y2= sinc(ts(:,ones(size(t))) - t(:,ones(size(ts)))')*[0; 0;0; 0 ;1 ;0 ;0 ;0 ;0];
+y3= sinc(ts(:,ones(size(t))) - t(:,ones(size(ts)))')*[0; 0;0; 0 ;0 ;.5;0 ;0 ;0];
+y = sinc(ts(:,ones(size(t))) - t(:,ones(size(ts)))')*x;
+plot(t,x,'o',ts,y,ts,y1,'-',ts,y2,ts,y3,':','LineWidth',1.5);
+grid on;
+##### SOURCE END #####
+-->
+   </body>
+</html>

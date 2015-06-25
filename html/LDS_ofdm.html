@@ -1,0 +1,186 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>LDS_ofdm</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-07-25">
+      <meta name="m-file" content="LDS_ofdm"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content"><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+
+ofdm.n_car   = 64;                <span class="comment">% OFDM-Untertraeger</span>
+ofdm.n_guard = 64;                <span class="comment">% Guardintervall-Laenge</span>
+ofdm.n_fft   = 256;               <span class="comment">% FFT-Laenge</span>
+psd_fft    = 512;                 <span class="comment">% PSD-FFT-Laenge</span>
+psd_window = hanning(psd_fft);    <span class="comment">% PSD-Fensterfunktion</span>
+f_A        = 512e6;               <span class="comment">% Abtastfrequenz</span>
+
+<span class="comment">% QPSK-Symbole generieren:</span>
+s_sym = (1/sqrt(2))*(sign(randn(2^14,1)) + j * sign(randn(2^14,1)));
+
+<span class="comment">% Spektrum berechnen</span>
+r=0.25;														  <span class="comment">% Roll-off-Faktor</span>
+ofdm.n_cos  = round(r*(ofdm.n_guard+ofdm.n_fft));
+signal      = ofdm_mod(s_sym,ofdm);               <span class="comment">% OFDM-Modulator aufrufen</span>
+[LDS,f_vec] = psd(signal,psd_fft,f_A,psd_window); <span class="comment">% Spektralschaetzung</span>
+f_vec       = f_vec - round(max(f_vec)/2);        <span class="comment">% Frequenzvektor verschieben</span>
+LDS         = [LDS((psd_fft / 2 + 1):psd_fft);LDS(1:(psd_fft / 2))];
+LDS_dB      = 10 * log10(LDS * (ofdm.n_car/ofdm.n_fft)); <span class="comment">% LDS in dB berechnen</span>
+
+subplot(2,1,1);
+plot(f_vec/1e6,LDS_dB);                            <span class="comment">% Spektrum darstellen</span>
+ylabel(<span class="string">'S_{ss}(f) in dB  \rightarrow'</span>);
+grid;
+axis([-max(f_vec/1e6) max(f_vec/1e6) -80 5]);
+title(<span class="string">'OFDM Spectrum, 64 carriers, FFT-Length = 256'</span>);
+
+
+N_carr = 16;                                    <span class="comment">% Anzahl der Traeger / FFT-L&auml;nge</span>
+
+subplot(2,1,2);
+hold <span class="string">on</span>;
+  <span class="keyword">for</span> i=2:N_carr,
+   sym1(i)=s_sym(i,1);
+   sig1    = ifft(sym1,N_carr);                 <span class="comment">% Zeitsignal berechnen</span>
+   sig1_w  = [sig1,zeros(1,N_carr*7)];          <span class="comment">% Nullen anhaengen</span>
+   spec1_w = fft(sig1_w);                       <span class="comment">% Spektrum berechnen</span>
+   omega   = ([0:8*N_carr-1].')/8/N_carr*2; 	<span class="comment">% normierte Frequenz</span>
+   plot(abs(spec1_w),<span class="string">'b-'</span>);
+   sym1(i)=0;
+  <span class="keyword">end</span>
+
+  grid;
+  axis([0 128 -Inf Inf]);
+  set(gca,<span class="string">'XTick'</span>,[1:8:256]);
+  set(gca,<span class="string">'XTickLabel'</span>,([0:1:31]));
+
+  title(<span class="string">'Spectrum of OFDM-Symbol'</span>);
+  hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="LDS_ofdm_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+close all;
+clear all;
+
+
+ofdm.n_car   = 64;                % OFDM-Untertraeger
+ofdm.n_guard = 64;                % Guardintervall-Laenge
+ofdm.n_fft   = 256;               % FFT-Laenge 
+psd_fft    = 512;                 % PSD-FFT-Laenge 
+psd_window = hanning(psd_fft);    % PSD-Fensterfunktion 
+f_A        = 512e6;               % Abtastfrequenz 
+
+% QPSK-Symbole generieren: 
+s_sym = (1/sqrt(2))*(sign(randn(2^14,1)) + j * sign(randn(2^14,1))); 
+
+% Spektrum berechnen
+r=0.25;														  % Roll-off-Faktor 
+ofdm.n_cos  = round(r*(ofdm.n_guard+ofdm.n_fft));   
+signal      = ofdm_mod(s_sym,ofdm);               % OFDM-Modulator aufrufen 
+[LDS,f_vec] = psd(signal,psd_fft,f_A,psd_window); % Spektralschaetzung 
+f_vec       = f_vec - round(max(f_vec)/2);        % Frequenzvektor verschieben
+LDS         = [LDS((psd_fft / 2 + 1):psd_fft);LDS(1:(psd_fft / 2))];   
+LDS_dB      = 10 * log10(LDS * (ofdm.n_car/ofdm.n_fft)); % LDS in dB berechnen
+
+subplot(2,1,1);
+plot(f_vec/1e6,LDS_dB);                            % Spektrum darstellen
+ylabel('S_{ss}(f) in dB  \rightarrow');
+grid;
+axis([-max(f_vec/1e6) max(f_vec/1e6) -80 5]);
+title('OFDM Spectrum, 64 carriers, FFT-Length = 256');
+
+
+N_carr = 16;                                    % Anzahl der Traeger / FFT-Länge
+
+subplot(2,1,2);
+hold on;
+  for i=2:N_carr,
+   sym1(i)=s_sym(i,1);
+   sig1    = ifft(sym1,N_carr);                 % Zeitsignal berechnen 
+   sig1_w  = [sig1,zeros(1,N_carr*7)];          % Nullen anhaengen 
+   spec1_w = fft(sig1_w);                       % Spektrum berechnen 
+   omega   = ([0:8*N_carr-1].')/8/N_carr*2; 	% normierte Frequenz 
+   plot(abs(spec1_w),'b-');
+   sym1(i)=0;
+  end
+  
+  grid;
+  axis([0 128 -Inf Inf]);
+  set(gca,'XTick',[1:8:256]);
+  set(gca,'XTickLabel',([0:1:31]));
+
+  title('Spectrum of OFDM-Symbol');
+  hold off;
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

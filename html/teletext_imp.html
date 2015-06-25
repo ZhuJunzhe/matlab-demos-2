@@ -1,0 +1,160 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Eyediagram of TV Text</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-07-25">
+      <meta name="m-file" content="teletext_imp"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Eyediagram of TV Text</h1>
+         <introduction>
+            <p>Copyright 2007 Telecommunications Lab</p>
+         </introduction><pre class="codeinput">T = 3/20;                               <span class="comment">% Symbol time interval [s].</span>
+Fs =30/T;                               <span class="comment">% Sampling frequency</span>
+t = -2*T:1/Fs:2*T;                      <span class="comment">% Time vector (sampling intervals)</span>
+t = t+0.00000001;                       <span class="comment">% Otherwise, the denominator would be zero at t=0</span>
+f= 0:1/Fs:2;
+fg=5.5;
+
+g = .5*erf(sqrt(2/log(2))*pi*fg*(t+.5*T))-.5*erf(sqrt(2/log(2))*pi*fg*(t-.5*T));
+<span class="comment">% Plotting</span>
+subplot(1,2,1);plot(t,g,<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,1.5);hold <span class="string">on</span>;
+grid <span class="string">on</span>;xlabel(<span class="string">'Time [10^{-6} X s]'</span>);ylabel(<span class="string">'Amplitude'</span>); axis([-0.2 .2 -.1 1.1]);
+title(<span class="string">'Impulse Response of TV Text'</span>);
+
+
+G=abs(fft([g zeros(1,2048-length(g))]));
+
+
+<span class="comment">% Plotting</span>
+subplot(1,2,2);plot(G/max(G),<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,1.5)
+title(<span class="string">'TV Text Pulse Former in Frequency Domain'</span>);
+axis([0 70 -.1 1.1]);xlabel(<span class="string">'Frequency [10^{5} X Hz]'</span>)
+grid <span class="string">on</span>;
+</pre><img vspace="5" hspace="5" src="teletext_imp_01.png"> <pre class="codeinput"><span class="comment">%Eye diagram</span>
+g1 = .5*erf(sqrt(2/log(2))*pi*fg*(t+.5*T+T))-.5*erf(sqrt(2/log(2))*pi*fg*(t-.5*T+T));
+g2 = .5*erf(sqrt(2/log(2))*pi*fg*(t+.5*T-T))-.5*erf(sqrt(2/log(2))*pi*fg*(t-.5*T-T));
+g3=g1+g2+g;
+<span class="comment">%Plotting</span>
+subplot(1,1,1);
+plot(t,g,<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,1.5);hold <span class="string">on</span>;
+grid <span class="string">on</span>;xlabel(<span class="string">'Time [10^{-6} X s]'</span>);ylabel(<span class="string">'Amplitude'</span>); axis([-.1 .1 -.1 1.1]);
+title(<span class="string">'Eye diagram of TV Text'</span>);
+plot(t,g1,<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,1.5);hold <span class="string">on</span>;plot(t,g2,<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,1.5);hold <span class="string">on</span>;plot(t,g3,<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,1.5);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="teletext_imp_02.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Eyediagram of TV Text
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+%%
+% 
+T = 3/20;                               % Symbol time interval [s].
+Fs =30/T;                               % Sampling frequency 
+t = -2*T:1/Fs:2*T;                      % Time vector (sampling intervals)
+t = t+0.00000001;                       % Otherwise, the denominator would be zero at t=0
+f= 0:1/Fs:2;
+fg=5.5;
+
+g = .5*erf(sqrt(2/log(2))*pi*fg*(t+.5*T))-.5*erf(sqrt(2/log(2))*pi*fg*(t-.5*T));
+% Plotting
+subplot(1,2,1);plot(t,g,'b','LineWidth',1.5);hold on;
+grid on;xlabel('Time [10^{-6} X s]');ylabel('Amplitude'); axis([-0.2 .2 -.1 1.1]);
+title('Impulse Response of TV Text');
+
+
+G=abs(fft([g zeros(1,2048-length(g))]));
+
+
+% Plotting
+subplot(1,2,2);plot(G/max(G),'b','LineWidth',1.5)
+title('TV Text Pulse Former in Frequency Domain');
+axis([0 70 -.1 1.1]);xlabel('Frequency [10^{5} X Hz]')
+grid on;
+%%
+
+%Eye diagram
+g1 = .5*erf(sqrt(2/log(2))*pi*fg*(t+.5*T+T))-.5*erf(sqrt(2/log(2))*pi*fg*(t-.5*T+T));
+g2 = .5*erf(sqrt(2/log(2))*pi*fg*(t+.5*T-T))-.5*erf(sqrt(2/log(2))*pi*fg*(t-.5*T-T));
+g3=g1+g2+g;
+%Plotting
+subplot(1,1,1);
+plot(t,g,'b','LineWidth',1.5);hold on;
+grid on;xlabel('Time [10^{-6} X s]');ylabel('Amplitude'); axis([-.1 .1 -.1 1.1]);
+title('Eye diagram of TV Text');
+plot(t,g1,'b','LineWidth',1.5);hold on;plot(t,g2,'b','LineWidth',1.5);hold on;plot(t,g3,'b','LineWidth',1.5);
+hold off;
+##### SOURCE END #####
+-->
+   </body>
+</html>

@@ -1,0 +1,150 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>log_normal</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2008-05-06">
+      <meta name="m-file" content="log_normal"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">The lognormal distribution</a></li>
+               <li><a href="#2">as calculated in Haykin's book</a></li>
+               <li><a href="#3">calculated correctly</a></li>
+            </ul>
+         </div>
+         <h2>The lognormal distribution<a name="1"></a></h2>
+         <p>Copyright 2007 Telecommunications Lab</p><pre class="codeinput">x=-12:6;
+</pre><h2>as calculated in Haykin's book<a name="2"></a></h2>
+         <p>1/sqrt(2) in the argument of the erf is missing</p><pre class="codeinput"><span class="keyword">for</span> sigma = 4:2:12
+    cdf = 1/2 * ( 1+ erf(x/sigma) );
+    semilogy(x,cdf);
+    hold <span class="string">on</span>;
+<span class="keyword">end</span>
+
+grid <span class="string">on</span>;
+plot(0,.5,<span class="string">'blackx'</span>,<span class="string">'linewidth'</span>,3);
+hold <span class="string">off</span>;
+
+xlim([min(x),max(x)]);
+ylim([1e-4,1]);
+</pre><img vspace="5" hspace="5" src="log_normal_01.png"> <h2>calculated correctly<a name="3"></a></h2><pre class="codeinput"><span class="keyword">for</span> sigma = 4:2:12
+    cdf = 1/2 * ( 1+ erf(x/sigma/sqrt(2)) );
+    semilogy(x,cdf);
+    hold <span class="string">on</span>;
+<span class="keyword">end</span>
+
+grid <span class="string">on</span>;
+plot(0,.5,<span class="string">'blackx'</span>,<span class="string">'linewidth'</span>,3);
+hold <span class="string">off</span>;
+
+xlim([min(x),max(x)]);
+</pre><img vspace="5" hspace="5" src="log_normal_02.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% The lognormal distribution
+%
+% Copyright 2007 Telecommunications Lab
+% $Revision: 2.0 $ $Date: 2008/05/06 $
+%
+x=-12:6;
+
+%% as calculated in Haykin's book
+% 1/sqrt(2) in the argument of the erf is missing
+for sigma = 4:2:12
+    cdf = 1/2 * ( 1+ erf(x/sigma) );
+    semilogy(x,cdf);
+    hold on;
+end
+
+grid on;
+plot(0,.5,'blackx','linewidth',3);
+hold off;
+
+xlim([min(x),max(x)]);
+ylim([1e-4,1]);
+
+%% calculated correctly
+for sigma = 4:2:12
+    cdf = 1/2 * ( 1+ erf(x/sigma/sqrt(2)) );
+    semilogy(x,cdf);
+    hold on;
+end
+
+grid on;
+plot(0,.5,'blackx','linewidth',3);
+hold off;
+
+xlim([min(x),max(x)]);
+##### SOURCE END #####
+-->
+   </body>
+</html>

@@ -1,0 +1,141 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Antenna gain for constant weighting with N=16 and d=\lambda/4</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-06-22">
+      <meta name="m-file" content="Ant_Gain"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Antenna gain for constant weighting with N=16 and d=\lambda/4</h1>
+         <introduction>
+            <p>Copyright 2007 Telecommunications Lab</p>
+         </introduction>
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#2">ploting</a></li>
+            </ul>
+         </div><pre class="codeinput">N=16;lambda=2*10^-6;     <span class="comment">%value of lambda doesn't matter in this case, it will be canceled</span>
+d=lambda/4;
+theta0=0;
+theta0_=pi/4;
+theta=[-pi/2:.01:pi/2];
+theta=theta+eps;         <span class="comment">%Otherwise, the denominator would be zero at t=0</span>
+theta_deg=theta.*(180/pi);
+<span class="comment">% \theta_0=0</span>
+G=(sin(pi*(N+1)*(d/lambda).*sin(theta-theta0)))./(sin(pi*(d/lambda).*sin(theta-theta0)));
+<span class="comment">% \theta_0=\pi/4</span>
+G_=(sin(pi*(N+1)*(d/lambda).*sin(theta-theta0_)))./(sin(pi*(d/lambda).*sin(theta-theta0_)));
+</pre><h2>ploting<a name="2"></a></h2><pre>Gain (\theta_0=0)</pre><pre class="codeinput"><span class="comment">%figure(1);set(1,'Name','Antenna gain for constant weighting with N=16 and d=\lambda/4');</span>
+subplot(1,1,1);title(<span class="string">'Antenna gain for constant weighting with N=16 and d=\lambda/4'</span>);
+subplot(1,2,1);plot(theta_deg,G,<span class="string">'LineWidth'</span>,1.5);axis([-80 80 -4 18]);
+grid <span class="string">on</span>;title(<span class="string">'\theta_0=0'</span>);
+xlabel(<span class="string">'Angle of Arrival, \theta (degrees)'</span>);ylabel(<span class="string">'Amplitude Gain'</span>)
+<span class="comment">%  Gain (\theta_0=\pi/4)</span>
+subplot(1,2,2);plot(theta_deg,G_,<span class="string">'LineWidth'</span>,1.5);axis([-80 80 -4 18])
+grid <span class="string">on</span>;title(<span class="string">'\theta_0=\pi/4'</span>);
+xlabel(<span class="string">'Angle of Arrival, \theta (degrees)'</span>);ylabel(<span class="string">'Amplitude Gain'</span>)
+</pre><img vspace="5" hspace="5" src="Ant_Gain_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Antenna gain for constant weighting with N=16 and d=\lambda/4
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+%%
+% 
+N=16;lambda=2*10^-6;     %value of lambda doesn't matter in this case, it will be canceled 
+d=lambda/4;
+theta0=0;
+theta0_=pi/4;
+theta=[-pi/2:.01:pi/2];
+theta=theta+eps;         %Otherwise, the denominator would be zero at t=0
+theta_deg=theta.*(180/pi);
+% \theta_0=0
+G=(sin(pi*(N+1)*(d/lambda).*sin(theta-theta0)))./(sin(pi*(d/lambda).*sin(theta-theta0)));
+% \theta_0=\pi/4
+G_=(sin(pi*(N+1)*(d/lambda).*sin(theta-theta0_)))./(sin(pi*(d/lambda).*sin(theta-theta0_)));
+
+%% ploting
+%  Gain (\theta_0=0)
+%figure(1);set(1,'Name','Antenna gain for constant weighting with N=16 and d=\lambda/4');
+subplot(1,1,1);title('Antenna gain for constant weighting with N=16 and d=\lambda/4');
+subplot(1,2,1);plot(theta_deg,G,'LineWidth',1.5);axis([-80 80 -4 18]);
+grid on;title('\theta_0=0');
+xlabel('Angle of Arrival, \theta (degrees)');ylabel('Amplitude Gain')
+%  Gain (\theta_0=\pi/4)
+subplot(1,2,2);plot(theta_deg,G_,'LineWidth',1.5);axis([-80 80 -4 18])
+grid on;title('\theta_0=\pi/4');
+xlabel('Angle of Arrival, \theta (degrees)');ylabel('Amplitude Gain')
+##### SOURCE END #####
+-->
+   </body>
+</html>

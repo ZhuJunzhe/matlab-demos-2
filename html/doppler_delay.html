@@ -1,0 +1,162 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Scatter-Plot for Hilly-Terrain</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-07-25">
+      <meta name="m-file" content="doppler_delay"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Scatter-Plot for Hilly-Terrain</h1>
+         <introduction>
+            <p>Copyright 2007 Telecommunications Lab</p>
+         </introduction>
+<!--
+<p>fd = [-1.5:0.05:1.5]; tau= [-1.5:0.05:1.5];</p>
+-->
+<pre class="codeinput">[fd,t]= meshgrid(-2.5:0.1:2.5,0:.5:25)
+fd_max=1;
+
+f_fd1=fd;
+<span class="keyword">for</span>(i=1:1:length(fd)),
+<span class="keyword">for</span>(k=1:1:length(fd)),
+    <span class="keyword">if</span>(abs(fd(i,k))&lt;fd_max),
+     f_fd1(i,k)=(1/pi)*(1/fd_max)/(sqrt(1-(fd(i,k)/(fd_max))^2));
+    <span class="keyword">else</span> f_fd1(i,k)=0;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">end</span>;
+
+f_fd2=fd;
+<span class="keyword">for</span>(i=1:1:length(fd)),
+<span class="keyword">for</span>(k=1:1:length(fd)),
+    <span class="keyword">if</span>(t(i,k)&lt;2.5),
+        f_fd2(i,k)= exp(-t(i,k));
+<span class="keyword">elseif</span> (t(i,k)&gt;15 &amp;&amp; t(i,k)&lt;21),
+    f_fd2(i,k)=.5*exp(15-t(i,k));
+<span class="keyword">else</span> f_fd2(i,k)=0;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">end</span>;
+f_fd=f_fd1.*f_fd2;
+
+surf(fd,t,f_fd);axis([-2.5 2.5 0 25 0 1]);
+xlabel(<span class="string">'(f)/(f_{max})'</span>);ylabel(<span class="string">'\tau'</span>);zlabel(<span class="string">'Z(\tau,f)'</span>);
+title(<span class="string">'Scatter-Plot for Hilly-Terrain'</span>);
+grid <span class="string">on</span>;
+campos([25,155,3])
+</pre><pre class="codeoutput">
+
+</pre><img vspace="5" hspace="5" src="doppler_delay_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Scatter-Plot for Hilly-Terrain
+% 
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+
+%%
+% 
+% fd = [-1.5:0.05:1.5];
+% tau= [-1.5:0.05:1.5];
+[fd,t]= meshgrid(-2.5:0.1:2.5,0:.5:25)
+fd_max=1;
+
+f_fd1=fd;
+for(i=1:1:length(fd)),
+for(k=1:1:length(fd)),
+    if(abs(fd(i,k))<fd_max),
+     f_fd1(i,k)=(1/pi)*(1/fd_max)/(sqrt(1-(fd(i,k)/(fd_max))^2));
+    else f_fd1(i,k)=0;
+    end 
+end
+end;
+
+f_fd2=fd;
+for(i=1:1:length(fd)),
+for(k=1:1:length(fd)),
+    if(t(i,k)<2.5),
+        f_fd2(i,k)= exp(-t(i,k));
+elseif (t(i,k)>15 && t(i,k)<21),
+    f_fd2(i,k)=.5*exp(15-t(i,k));
+else f_fd2(i,k)=0;
+    end
+end
+end;
+f_fd=f_fd1.*f_fd2;
+
+surf(fd,t,f_fd);axis([-2.5 2.5 0 25 0 1]);
+xlabel('(f)/(f_{max})');ylabel('\tau');zlabel('Z(\tau,f)');
+title('Scatter-Plot for Hilly-Terrain');
+grid on;
+campos([25,155,3])
+##### SOURCE END #####
+-->
+   </body>
+</html>

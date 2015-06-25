@@ -1,0 +1,146 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>impulse_response</title>
+      <meta name="generator" content="MATLAB 7.4">
+      <meta name="date" content="2007-07-04">
+      <meta name="m-file" content="impulse_response"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">Impulse Response of LR lowpass</a></li>
+               <li><a href="#2">Input Signal</a></li>
+               <li><a href="#3">Impulse response computation</a></li>
+               <li><a href="#4">Ploting</a></li>
+            </ul>
+         </div>
+         <h2>Impulse Response of LR lowpass<a name="1"></a></h2>
+         <p>Copyright 2007 Telecommunications Lab</p><pre class="codeinput">Ts=0.001;                                               <span class="comment">% Sampling Time</span>
+t=[0: Ts: 2];                                           <span class="comment">% Initializing Time Axis</span>
+<span class="comment">% L{dy(t)/dt+2y(t)=x(t)}={sY(s)+Y(s)=X(s)}=&gt; Transfer function</span>
+<span class="comment">% (H(s)=Y(s)/X(s))</span>
+H=1/(s+2);                                              <span class="comment">%Transfer function</span>
+h1=ilaplace(H);                                         <span class="comment">%inverse Laplace</span>
+h=subs(h1);
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><h2>Input Signal<a name="2"></a></h2>
+         <p>Form Dirac pulse approximations</p><pre class="codeinput">dirac1=dirac__(0.005,t);
+dirac2=dirac__(0.05,t);
+dirac3=dirac__(0.25,t);
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><h2>Impulse response computation<a name="3"></a></h2>
+         <p>convoluting Transferfunction with the formed input signals</p><pre class="codeinput">impulse1=Ts*conv(dirac1,h);
+impulse2=Ts*conv(dirac2,h);
+impulse3=Ts*conv(dirac3,h);
+t=[0: Ts: 4];               <span class="comment">% New time axis after the convolution</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><h2>Ploting<a name="4"></a></h2><pre class="codeinput">plot(t,impulse1,<span class="string">'--'</span>,t,impulse2,<span class="string">'-'</span>,t,impulse3,<span class="string">':'</span>,<span class="string">'LineWidth'</span>,1.5);
+axis([0 2 0 1])
+xlabel(<span class="string">'Time [t]'</span>);ylabel(<span class="string">'r_{\Delta}'</span>);title(<span class="string">'Impulse Response'</span>)
+legend(<span class="string">'\Delta=0.005'</span>,<span class="string">'\Delta=0.05'</span>,<span class="string">'\Delta=0.25'</span>)
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><img vspace="5" hspace="5" src="impulse_response_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.4<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Impulse Response of LR lowpass
+% Copyright 2007 Telecommunications Lab
+% $Revision: 1.0 $ $Date: 2007/06/21 12:45:07 $
+Ts=0.001;                                               % Sampling Time
+t=[0: Ts: 2];                                           % Initializing Time Axis 
+% L{dy(t)/dt+2y(t)=x(t)}={sY(s)+Y(s)=X(s)}=> Transfer function 
+% (H(s)=Y(s)/X(s))
+H=1/(s+2);                                              %Transfer function
+h1=ilaplace(H);                                         %inverse Laplace
+h=subs(h1);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Input Signal
+% Form Dirac pulse approximations
+dirac1=dirac__(0.005,t);
+dirac2=dirac__(0.05,t);
+dirac3=dirac__(0.25,t);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Impulse response computation 
+% convoluting Transferfunction with the formed input signals 
+impulse1=Ts*conv(dirac1,h); 
+impulse2=Ts*conv(dirac2,h);
+impulse3=Ts*conv(dirac3,h);
+t=[0: Ts: 4];               % New time axis after the convolution
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Ploting
+plot(t,impulse1,'REPLACE_WITH_DASH_DASH',t,impulse2,'-',t,impulse3,':','LineWidth',1.5);
+axis([0 2 0 1])
+xlabel('Time [t]');ylabel('r_{\Delta}');title('Impulse Response')
+legend('\Delta=0.005','\Delta=0.05','\Delta=0.25')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+##### SOURCE END #####
+-->
+   </body>
+</html>

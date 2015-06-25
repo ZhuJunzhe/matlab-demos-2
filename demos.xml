@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Revision: 1.9.4.11 $  $Date: 2004/04/16 22:05:20 $ -->
+<demos>
+   <name>Telecommunications</name>
+   <type>matlab</type>
+   <icon>$toolbox/matlab/icons/demoicon.gif</icon>
+
+    <description isCdata="no">
+    </description>
+   
+    <demosection>
+      <label>Telecommunications I</label>
+      <description isCdata="no">
+    <p></p>
+      </description>
+      <demoitem>
+        <label>Impulse Response of LR lowpass</label>
+        <file>html/impulse_response.html</file>
+        <source>impulse_response</source>
+        <callback>playshow impulse_response</callback>
+      </demoitem>
+      <demoitem>
+         <label>Interpolating Analog Signals</label>
+         <file>html/DA_wandlung.html</file>
+         <source>DA_wandlung</source>
+         <callback>playshow DA_wandlung</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Eyediagram</label>
+         <file>html/eyediagram_test.html</file>
+         <source>eyediagram_test</source>
+         <callback>playshow eyediagram_test</callback> 
+      </demoitem>  
+      <demoitem>
+         <label>Gaussian Pulse Shaper</label>
+         <file>html/gaussroll.html</file>
+         <source>gaussroll.m</source>
+         <callback>playshow gaussroll</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Cosine Roll-Off</label>
+         <file>html/cosroll.html</file>
+         <source>cosroll.m</source>
+         <callback>playshow cosroll</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Gaussian Pulse vs. Cosine Roll-Off Pulse</label>
+         <file>html/gauss_vs_cosine.html</file>
+         <source>gauss_vs_cosine.m</source>
+         <callback>playshow gauss_vs_cosine</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Capacity of Binary Symmetric Channel (BSC)</label>
+         <file>html/capacity.html</file>
+         <source>capacity.m</source>
+         <callback>playshow capacity</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Complementary Error Function</label>
+         <file>html/erfc_test.html</file>
+         <source>erfc_test.m</source>
+         <callback>playshow erfc_test</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Symbol Error Rate for BPSK</label>
+         <file>html/sim_erfc.html</file>
+         <source>sim_erfc.m</source>
+         <callback>playshow sim_erfc</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Rayleigh Distribution</label>
+         <file>html/rayleigh_dist.html</file>
+         <source>rayleigh_dist.m</source>
+         <callback>playshow rayleigh_dist</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Distribution Function of Doppler Shift</label>
+         <file>html/doppler.html</file>
+         <source>doppler</source>
+         <callback>playshow doppler</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Scatter-Plot for Hilly-Terrain</label>
+         <file>html/doppler_delay.html</file>
+         <source>doppler_delay.m</source>
+         <callback>playshow doppler_delay</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Root Raised-Cosine</label>
+         <file>html/rootcosroll.html</file>
+         <source>rootcosroll.m</source>
+         <callback>playshow rootcosroll</callback> 
+      </demoitem>
+      <demoitem>
+         <label>SER for 2- 4- and 8-PAM</label>
+         <file>html/PAM_erfc.html</file>
+         <source>PAM_erfc.m</source>
+         <callback>playshow PAM_erfc</callback> 
+      </demoitem>
+      <demoitem>
+         <label>SER-BER with Gray Coding</label>
+         <file>html/approx_BER.html</file>
+         <source>approx_BER.m</source>
+         <callback>playshow approx_BER</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Eyediagram of TV Text</label>
+         <file>html/teletext_imp.html</file>
+         <source>teletext_imp.m</source>
+         <callback>playshow teletext_imp</callback> 
+      </demoitem>
+      <demoitem>
+         <label>QPSK Modulated Signal Using Cosine Roll-Off and Rectangular Pulses</label>
+         <file>html/QPSK_test.html</file>
+         <source>QPSK_test.m</source>
+         <callback>playshow QPSK_test</callback> 
+      </demoitem>
+      <demoitem>
+         <label>SER of PSK</label>
+         <file>html/p_psk.html</file>
+         <source>p_psk.m</source>
+         <callback>playshow p_psk</callback> 
+      </demoitem>
+      <demoitem>
+         <label>SER of QAM</label>
+         <file>html/p_qam.html</file>
+         <source>p_qam.m</source>
+         <callback>playshow p_qam</callback> 
+      </demoitem>
+      <demoitem>
+         <label>SER of DAPSK</label>
+         <file>html/p_dpsk.html</file>
+         <source>p_dpsk.m</source>
+         <callback>playshow p_dpsk</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Spectrum Analysis of CPM</label>
+         <file>html/spect_cpm.html</file>
+         <source>spect_cpm.m</source>
+         <callback>playshow spect_cpm</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Spectrum Analysis of MSK</label>
+         <file>html/spect_msk.html</file>
+         <source>spect_msk.m</source>
+         <callback>playshow spect_msk</callback> 
+      </demoitem>
+      <demoitem>
+         <label>FSK Simulation</label>
+         <file>html/fsk_test2.html</file>
+         <source>fsk_test2.m</source>
+         <callback>playshow fsk_test2</callback> 
+      </demoitem>
+      <demoitem>
+         <label>Guard Interval</label>
+         <file>html/guard.html</file>
+         <source>guard.m</source>
+         <callback>playshow guard</callback> 
+      </demoitem>
+      <demoitem>
+         <label>PSD od OFDM Signal</label>
+         <file>html/LDS_ofdm.html</file>
+         <source>LDS_ofdm.m</source>
+         <callback>playshow LDS_ofdm</callback> 
+      </demoitem>
+<demoitem>
+         <label>Cosine Rolloff Time vs. Frequency Domain</label>
+         <type>M-GUI</type>
+         <source>rolloff_demo</source>
+         <callback>rolloff_demo</callback>
+      </demoitem>
+      <demoitem>
+         <label>Comparision of PDF's of different Modulations</label>
+         <file>html/OQPSK_LDS.html</file>
+         <callback>playshow OQPSK_LDS</callback>
+      </demoitem>
+      <demoitem>
+         <label>Comparision of PDF's of different Modulations 2</label>
+         <file>html/QPSK_LDS.html</file>
+         <callback>playshow QPSK_LDS</callback>
+      </demoitem>
+      </demosection>
+   
+
+
+
+
+
+   <demosection>
+      <label>Telecommunications II</label>
+      <description isCdata="no">
+      <p></p>
+      </description>
+      <demoitem>
+         <label>Off-axis gain characteristic of a 1-meter parabolic antenna at 4 GHz</label>
+         <file>html/offAxisGain.html</file>
+         <callback>playshow offAxisGain</callback>
+      </demoitem>
+      <demoitem>
+         <label>Diffraction Losses</label>
+         <file>html/diffraction.html</file>
+         <callback>playshow diffraction</callback>
+      </demoitem>
+      <demoitem>
+         <label>The lognormal distribution</label>
+         <file>html/log_normal.html</file>
+         <callback>playshow log_normal</callback>
+      </demoitem>
+      <demoitem>
+         <label>Rayleigh Probability Density Function for different \sigma</label>
+         <file>html/rayleighPDF.html</file>
+         <callback>playshow rayleighPDF</callback>
+      </demoitem>
+      <demoitem>
+         <label>Rayleigh Cummulative Density Function for different \sigma</label>
+         <file>html/rayleighCDF.html</file>
+         <callback>playshow rayleighCDF</callback>
+      </demoitem>
+      <demoitem>
+         <label>Rayleigh Amplitude Distribution</label>
+         <file>html/rayleigh.html</file>
+         <callback>playshow rayleigh</callback>
+      </demoitem>
+      <demoitem>
+         <label>Rician Distribution</label>
+         <file>html/rice.html</file>
+         <callback>playshow rice</callback>
+      </demoitem>
+       <demoitem>
+         <label>Simulation of Rayleigh Channel</label>
+         <file>html/rayleighFading.html</file>
+         <callback>playshow rayleighFading</callback>
+      </demoitem>
+      <demoitem>
+         <label>Rayleigh Channel</label>
+         <file>html/rayleigh_channel.html</file>
+         <callback>playshow rayleigh_channel</callback>
+      </demoitem>
+      <demoitem>
+         <label>Comparison of original spectrum with Doppler-spreadspectrum</label>
+         <file>html/DopplerSpreading.html</file>
+         <callback>playshow DopplerSpreading</callback>
+      </demoitem>
+      <demoitem>
+         <label>Frequency Response of static two-ray channel</label>
+         <file>html/twoRayChannel.html</file>
+         <callback>playshow twoRayChannel</callback>
+      </demoitem>
+      <demoitem>
+         <label>Performance of coherently-detected BPSK over different fading channels</label>
+         <file>html/BER_fading.html</file>
+         <callback>playshow BER_fading</callback>
+      </demoitem>
+  
+      <demoitem>
+         <label>A frequency domain representation of FDMA</label>
+         <file>html/fdma.html</file>
+         <callback>playshow fdma</callback>
+      </demoitem> 
+      <demoitem>
+         <label>Walsh Hadamard Code</label>
+         <file>html/hadamard_cros_corr.html</file>
+         <callback>playshow hadamard_cros_corr</callback>
+      </demoitem> 
+      <demoitem>
+         <label>Gold Code</label>
+         <file>html/gold_cross.html</file>
+         <callback>playshow gold_cross</callback>
+      </demoitem> 
+      <demoitem>
+         <label>Performance degradation due to multiple-access interference</label>
+         <file>html/performance_degradation.html</file>
+         <callback>playshow performance_degradation</callback>
+      </demoitem> 
+      <demoitem>
+         <label>Performance degradation of first of two users</label>
+         <file>html/deg_two_users.html</file>
+         <callback>playshow deg_two_users</callback>
+      </demoitem> 
+      <demoitem>
+         <label>Antenna gain for constant weighting</label>
+         <file>html/Ant_Gain.html</file>
+         <callback>playshow Ant_Gain</callback>
+      </demoitem> 
+      <demoitem>
+         <label>System Simulation with Turbo Channel Coding</label>
+         <file>html/turbo_sys_demo.html</file>
+         <callback>playshow turbo_sys_demo</callback>
+      </demoitem> 
+   </demosection>
+</demos>
